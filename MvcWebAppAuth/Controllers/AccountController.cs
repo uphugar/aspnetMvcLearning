@@ -9,6 +9,7 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using MvcWebAppAuth.Models;
+using MvcWebAppAuth.Services;
 
 namespace MvcWebAppAuth.Controllers
 {
@@ -155,6 +156,10 @@ namespace MvcWebAppAuth.Controllers
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
+                    UserManager.AddClaim(user.Id, new Claim(ClaimTypes.GivenName, model.FirstName));
+                    CheckingAccountService checkingAccountService = new CheckingAccountService(HttpContext.GetOwinContext().Get<ApplicationDbContext>());
+                    checkingAccountService.CreateCheckingAccount(model.FirstName, model.LastName, user.Id, 0);
+
                     await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
                     
                     // For more information on how to enable account confirmation and password reset please visit https://go.microsoft.com/fwlink/?LinkID=320771
@@ -367,10 +372,16 @@ namespace MvcWebAppAuth.Controllers
                 {
                     return View("ExternalLoginFailure");
                 }
-                var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
+                ;
+                var user = new ApplicationUser { UserName = info.DefaultUserName, Email = model.Email };
                 var result = await UserManager.CreateAsync(user);
                 if (result.Succeeded)
                 {
+                    CheckingAccountService checkingAccountService = new CheckingAccountService(HttpContext.GetOwinContext().Get<ApplicationDbContext>());
+                    checkingAccountService.CreateCheckingAccount(info.ExternalIdentity.Name, "user", user.Id, 500);
+
+                    //UserManager.AddClaim(user.Id, new Claim(ClaimTypes.GivenName, info.ExternalIdentity.NameClaimType));
+
                     result = await UserManager.AddLoginAsync(user.Id, info.Login);
                     if (result.Succeeded)
                     {

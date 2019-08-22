@@ -16,6 +16,7 @@ namespace MvcWebAppAuth.Models
             // Add custom user claims here
             return userIdentity;
         }
+        public int Pin { get; set; }
     }
 
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
@@ -29,5 +30,8 @@ namespace MvcWebAppAuth.Models
         {
             return new ApplicationDbContext();
         }
+        public DbSet<CheckingAccount> CheckingAccounts { get; set; }
+
+        public DbSet<Transaction> Transactions { get; set; }
     }
 }
