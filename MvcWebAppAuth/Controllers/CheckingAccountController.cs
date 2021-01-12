@@ -10,15 +10,20 @@ namespace MvcWebAppAuth.Controllers
     public class CheckingAccountController : Controller
     {
         // GET: CheckingAccount
+        private ApplicationDbContext db = new ApplicationDbContext();
         public ActionResult Index()
         {
             return View();
         }
 
         // GET: CheckingAccount/Details/5
-        public ActionResult Details()
+        public ActionResult Details(int checkingAccountId)
         {
-            var account = new CheckingAccount { AccountNumber = "00087445982365", FirstName = "Uday", LastName = "Hugar", Balance = 645, Id = 1 };
+            
+            var checkac=db.CheckingAccounts.Find(checkingAccountId);
+            var testing2 = db.Transactions.ToList();
+            var test3 = testing2.Where(b=>b.CheckingAccountId==checkingAccountId).Sum(a=>a.Amount);
+            var account = new CheckingAccount { AccountNumber = checkac.AccountNumber, FirstName = checkac.FirstName, LastName = checkac.LastName, Balance = test3, Id = checkingAccountId };
             return View(account);
         }
 
