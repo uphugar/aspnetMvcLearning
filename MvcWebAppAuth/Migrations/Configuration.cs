@@ -10,6 +10,7 @@ namespace MvcWebAppAuth.Migrations
         public Configuration()
         {
             AutomaticMigrationsEnabled = true;
+            AutomaticMigrationDataLossAllowed = true;
             ContextKey = "MvcWebAppAuth.Models.ApplicationDbContext";
         }
 
